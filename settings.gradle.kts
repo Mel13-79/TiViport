@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "OpenTV"
+rootProject.name = "TiViport"
 include(":app")
