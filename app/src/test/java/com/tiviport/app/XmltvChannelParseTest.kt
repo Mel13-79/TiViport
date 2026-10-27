@@ -3,10 +3,10 @@
  * Copyright (C) 2026 The OpenTV Contributors
  * Licensed under the GNU General Public License v3.0 or later.
  */
-package app.opentv
+package com.tiviport.app
 
-import app.opentv.data.model.Programme
-import app.opentv.data.parser.XmltvParser
+import com.tiviport.app.data.model.Programme
+import com.tiviport.app.data.parser.XmltvParser
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import org.junit.Test

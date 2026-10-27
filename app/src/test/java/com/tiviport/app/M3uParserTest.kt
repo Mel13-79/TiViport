@@ -3,9 +3,9 @@
  * Copyright (C) 2026 The OpenTV Contributors
  * Licensed under the GNU General Public License v3.0 or later.
  */
-package app.opentv
+package com.tiviport.app
 
-import app.opentv.data.parser.M3uParser
+import com.tiviport.app.data.parser.M3uParser
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
