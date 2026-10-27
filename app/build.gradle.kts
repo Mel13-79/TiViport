@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "app.opentv"
+    namespace = "com.tiviport.app"
     compileSdk = 35
 
     defaultConfig {
