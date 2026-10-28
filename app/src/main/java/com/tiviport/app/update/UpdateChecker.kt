@@ -80,7 +80,7 @@ class UpdateChecker(
 
     companion object {
         /** The single place the project's GitHub location is written down. */
-        const val REPO_SLUG = "opentvproject/opentv"
+        const val REPO_SLUG = "Mel13-79/TiViport"
 
         /**
          * The GitHub release body is written for developers and has GitHub's auto-generated

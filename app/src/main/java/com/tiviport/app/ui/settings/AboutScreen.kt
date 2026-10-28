@@ -76,7 +76,7 @@ fun AboutScreen(onBack: () -> Unit) {
         Spacer(Modifier.height(20.dp))
 
         Section(stringResource(R.string.about_version)) {
-            Text("OpenTV ${BuildConfig.VERSION_NAME}", style = MaterialTheme.typography.titleMedium)
+            Text("TiViport ${BuildConfig.VERSION_NAME}", style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(12.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 OutlinedButton(
@@ -132,48 +132,15 @@ fun AboutScreen(onBack: () -> Unit) {
 
         Spacer(Modifier.height(16.dp))
 
-        Section(stringResource(R.string.about_support_title)) {
-            Text(
-                stringResource(R.string.about_support_body),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Spacer(Modifier.height(12.dp))
-            LinkLine(stringResource(R.string.about_sponsor_github), "github.com/sponsors/legionnaireneyland")
-            Spacer(Modifier.height(12.dp))
-            LinkLine(
-                stringResource(R.string.about_donate_paypal),
-                "leetobin1982@gmail.com",
-                url = "https://www.paypal.com/donate/?business=leetobin1982@gmail.com&item_name=Support+OpenTV&no_recurring=0&currency_code=GBP",
-            )
-            Spacer(Modifier.height(12.dp))
-            val donateQr = remember { QrCodes.render("https://github.com/sponsors/legionnaireneyland", 400) }
-            donateQr?.let { bmp ->
-                Image(
-                    bitmap = bmp.asImageBitmap(),
-                    contentDescription = stringResource(R.string.about_scan_to_donate),
-                    modifier = Modifier.size(180.dp).clip(RoundedCornerShape(8.dp)),
-                )
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    stringResource(R.string.about_scan_to_donate),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-
-        Spacer(Modifier.height(16.dp))
-
         Section(stringResource(R.string.about_licence_links_title)) {
             LinkLine(
                 stringResource(R.string.about_licence_label),
                 "GNU General Public License v3.0",
                 url = "https://www.gnu.org/licenses/gpl-3.0.html",
             )
-            LinkLine(stringResource(R.string.about_source_code), "github.com/opentvproject/opentv")
-            LinkLine(stringResource(R.string.about_report_bug), "github.com/opentvproject/opentv/issues")
-            LinkLine(stringResource(R.string.about_install_page), "opentvproject.github.io/opentv")
+            LinkLine(stringResource(R.string.about_source_code), "github.com/Mel13-79/TiViport")
+            LinkLine(stringResource(R.string.about_report_bug), "github.com/Mel13-79/TiViport/issues")
+            LinkLine(stringResource(R.string.about_install_page), "Mel13-79.github.io/TiViport")
         }
     }
 }

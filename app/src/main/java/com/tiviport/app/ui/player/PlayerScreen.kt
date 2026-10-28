@@ -228,7 +228,7 @@ fun PlayerScreen(
                 PlayerController.Request(
                     url = url,
                     title = channel.shownName,
-                    userAgent = source?.userAgent ?: "OpenTV/0.1 (Android)",
+                    userAgent = source?.userAgent ?: "TiViport/1.0.0 (Android)",
                     isLive = true,
                 ),
                 debounce = false,

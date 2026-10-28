@@ -336,7 +336,7 @@ private fun OpenTvApp(isTelevision: Boolean) {
                     },
                     onResume = { key, url, title ->
                         navController.navigate(
-                            Routes.vodPlayer(key, url, title, "OpenTV/0.1 (Android)"),
+                            Routes.vodPlayer(key, url, title, "TiViport/1.0.0 (Android)"),
                         )
                     },
                     onAddSource = { navController.navigate(Routes.ADD_SOURCE) },
@@ -394,7 +394,7 @@ private fun OpenTvApp(isTelevision: Boolean) {
                                 key = "movie:${movie.id}",
                                 url = movie.streamUrl,
                                 title = movie.displayTitle,
-                                ua = "OpenTV/0.1 (Android)",
+                                ua = "TiViport/1.0.0 (Android)",
                             ),
                         )
                     },
@@ -479,7 +479,7 @@ private fun OpenTvApp(isTelevision: Boolean) {
                     viewModel = vodViewModel,
                     onPlayEpisode = { key, url, title ->
                         navController.navigate(
-                            Routes.vodPlayer(key, url, title, "OpenTV/0.1 (Android)"),
+                            Routes.vodPlayer(key, url, title, "TiViport/1.0.0 (Android)"),
                         )
                     },
                     onOpenSeries = { series -> navController.navigate(Routes.seriesDetail(series.id)) },
@@ -498,13 +498,13 @@ private fun OpenTvApp(isTelevision: Boolean) {
                                 key = "movie:${movie.id}",
                                 url = movie.streamUrl,
                                 title = movie.displayTitle,
-                                ua = "OpenTV/0.1 (Android)",
+                                ua = "TiViport/1.0.0 (Android)",
                             ),
                         )
                     },
                     onPlayUrl = { key, url, title ->
                         navController.navigate(
-                            Routes.vodPlayer(key = key, url = url, title = title, ua = "OpenTV/0.1 (Android)"),
+                            Routes.vodPlayer(key = key, url = url, title = title, ua = "TiViport/1.0.0 (Android)"),
                         )
                     },
                     onOpenMovie = { movie -> navController.navigate(Routes.movieDetail(movie.id)) },
@@ -531,7 +531,7 @@ private fun OpenTvApp(isTelevision: Boolean) {
                     mediaKey = arg("key"),
                     streamUrl = arg("url"),
                     title = arg("title"),
-                    userAgent = arg("ua").ifEmpty { "OpenTV/0.1 (Android)" },
+                    userAgent = arg("ua").ifEmpty { "TiViport/1.0.0 (Android)" },
                     onBack = { navController.popBackStack() },
                 )
             }
