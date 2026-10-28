@@ -5,6 +5,13 @@
  */
 package com.tiviport.app.ui.channels
 
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -196,10 +203,7 @@ fun ChannelManagerScreen(
                     SearchPane(
                         query = query,
                         results = searchResults,
-                        onKey = { if (query.length < 40) query += it },
-                        onSpace = { if (query.length < 40) query += " " },
-                        onBackspace = { query = query.dropLast(1) },
-                        onClear = { query = "" },
+                        onQueryChange = { query = it },
                         onToggleHidden = { row, hidden -> viewModel.setRowHidden(row, !hidden) },
                         onToggleFavourite = { viewModel.toggleFavourite(it) },
                     )
@@ -218,22 +222,46 @@ fun ChannelManagerScreen(
     }
 }
 
-/** The kept-intact keyboard-driven search: on-screen keyboard on the left, matches on the right. */
+/** Поиск с системной клавиатурой */
 @Composable
 private fun SearchPane(
     query: String,
     results: List<ChannelsViewModel.Row>,
-    onKey: (String) -> Unit,
-    onSpace: () -> Unit,
-    onBackspace: () -> Unit,
-    onClear: () -> Unit,
+    onQueryChange: (String) -> Unit,
     onToggleHidden: (ChannelsViewModel.Row, Boolean) -> Unit,
     onToggleFavourite: (ChannelsViewModel.Row) -> Unit,
 ) {
-    Row(Modifier.fillMaxSize()) {
-        OnScreenKeyboard(onKey = onKey, onSpace = onSpace, onBackspace = onBackspace, onClear = onClear)
-        Spacer(Modifier.width(24.dp))
-        Column(Modifier.weight(1f).fillMaxSize()) {
+    val focusRequester = remember { FocusRequester() }
+    val keyboard = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    Column(Modifier.fillMaxSize()) {
+        BasicTextField(
+            value = query,
+            onValueChange = onQueryChange,
+            singleLine = true,
+            textStyle = MaterialTheme.typography.titleLarge.copy(
+                color = if (query.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary,
+            ),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 12.dp)
+                .focusRequester(focusRequester)
+                .onFocusChanged { if (it.isFocused) keyboard?.show() }
+                .onPreviewKeyEvent { event ->
+                    if (event.type == KeyEventType.KeyDown && event.key == Key.DirectionDown) {
+                        keyboard?.hide()
+                        focusManager.moveFocus(FocusDirection.Down)
+                        true
+                    } else false
+                },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        )
+        LaunchedEffect(Unit) { focusRequester.requestFocus() }
+
+        Spacer(Modifier.height(8.dp))
+        Column(Modifier.weight(1f).fillMaxSize().padding(horizontal = 24.dp)) {
             when {
                 query.isBlank() -> Hint(stringResource(R.string.channels_manager_search_hint))
                 query.trim().length < 2 -> Hint(stringResource(R.string.common_keep_typing))
