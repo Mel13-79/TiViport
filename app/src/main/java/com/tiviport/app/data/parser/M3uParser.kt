@@ -45,6 +45,7 @@ object M3uParser {
         var pendingName: String? = null
         var pendingAttributes: Map<String, String> = emptyMap()
         var pendingNumber: Int? = null
+        var pendingGroup: String? = null
         // #EXTVLCOPT / #EXTHTTP lines that apply to the next URL.
         var index = 0
 
@@ -64,6 +65,11 @@ object M3uParser {
                     pendingAttributes = parseAttributes(line)
                     pendingName = displayNameOf(line, pendingAttributes)
                     pendingNumber = pendingAttributes["tvg-chno"]?.toIntOrNull()
+                }
+
+                // Читаем группу из #EXTGRP, если провайдер использует этот формат
+                line.startsWith("#EXTGRP:", ignoreCase = true) -> {
+                    pendingGroup = line.substringAfter(":").trim()
                 }
 
                 // Any other directive: ignore, but keep the pending EXTINF alive.
@@ -89,7 +95,7 @@ object M3uParser {
                                 sourceId = sourceId,
                                 streamId = streamId,
                                 name = name,
-                                categoryId = attributes["group-title"]?.takeIf { it.isNotBlank() },
+                                categoryId = (attributes["group-title"] ?: pendingGroup)?.takeIf { it.isNotBlank() },
                                 logoUrl = (attributes["tvg-logo"] ?: attributes["logo"])
                                     ?.takeIf { it.isNotBlank() },
                                 epgChannelId = attributes["tvg-id"]?.takeIf { it.isNotBlank() },
@@ -102,6 +108,7 @@ object M3uParser {
                     pendingName = null
                     pendingAttributes = emptyMap()
                     pendingNumber = null
+                    pendingGroup = null
                 }
             }
         }
