@@ -50,6 +50,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import com.tiviport.app.R
 import com.tiviport.app.data.model.Channel
 import com.tiviport.app.data.model.Movie
@@ -62,6 +69,7 @@ import coil.compose.AsyncImage
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
 
 /**
  * Channel search with an on-screen keyboard.
@@ -101,6 +109,7 @@ fun SearchScreen(
             Spacer(Modifier.width(20.dp))
             val focusRequester = remember { FocusRequester() }
             val keyboard = LocalSoftwareKeyboardController.current
+            val focusManager = LocalFocusManager.current
             
             BasicTextField(
                 value = query,
@@ -116,6 +125,15 @@ fun SearchScreen(
                     .onFocusChanged { focusState ->
                         if (focusState.isFocused) {
                             keyboard?.show()
+                        }
+                    }
+                    .onPreviewKeyEvent { event ->
+                        if (event.type == KeyEventType.KeyDown && event.key == Key.DirectionDown) {
+                            keyboard?.hide()
+                            focusManager.moveFocus(FocusDirection.Down)
+                            true
+                        } else {
+                            false
                         }
                     },
                 keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
