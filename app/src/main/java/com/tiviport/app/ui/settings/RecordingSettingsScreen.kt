@@ -52,9 +52,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -91,6 +97,8 @@ fun RecordingSettingsScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     val settings = remember { ServiceLocator.get(context).settings }
     val scope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
+    val keyboard = LocalSoftwareKeyboardController.current
 
     var target by remember { mutableStateOf(settings.recordingTarget.value) }
     var host by remember { mutableStateOf(settings.smbHost.value) }
@@ -558,6 +566,8 @@ private fun Field(
     onChange: (String) -> Unit,
 ) {
     var revealed by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+    val keyboard = LocalSoftwareKeyboardController.current
     OutlinedTextField(
         value = value,
         onValueChange = onChange,
@@ -579,6 +589,14 @@ private fun Field(
                 }
             }
         },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .onPreviewKeyEvent { event ->
+                if (event.type == KeyEventType.KeyDown && event.key == Key.DirectionDown) {
+                    keyboard?.hide()
+                    focusManager.moveFocus(FocusDirection.Down)
+                    true
+                } else false
+            },
     )
 }

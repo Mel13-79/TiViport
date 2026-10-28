@@ -38,7 +38,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -68,6 +74,8 @@ fun AddSourceScreen(
     editingSourceId: Long? = null,
 ) {
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+    val keyboard = LocalSoftwareKeyboardController.current
     // The QR "set it up from your phone" flow only makes sense on a TV — it serves a setup page
     // FROM this device for a phone to fill in. On a phone that same screen shows a QR meant to be
     // scanned BY a phone, which is nonsensical and traps the user — so a non-TV device defaults
@@ -178,7 +186,15 @@ fun AddSourceScreen(
                 onValueChange = { name = it },
                 label = { Text(stringResource(R.string.epg_name_optional)) },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onPreviewKeyEvent { event ->
+                        if (event.type == KeyEventType.KeyDown && event.key == Key.DirectionDown) {
+                            keyboard?.hide()
+                            focusManager.moveFocus(FocusDirection.Down)
+                            true
+                        } else false
+                    },
             )
             Spacer(Modifier.height(12.dp))
 
@@ -206,7 +222,15 @@ fun AddSourceScreen(
                 trailingIcon = { PasteButton { url += it } },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onPreviewKeyEvent { event ->
+                        if (event.type == KeyEventType.KeyDown && event.key == Key.DirectionDown) {
+                            keyboard?.hide()
+                            focusManager.moveFocus(FocusDirection.Down)
+                            true
+                        } else false
+                    },
             )
 
             if (kind == SourceKind.XTREAM) {
@@ -217,7 +241,15 @@ fun AddSourceScreen(
                     label = { Text(stringResource(R.string.recset_field_username)) },
                     trailingIcon = { PasteButton { username += it } },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onPreviewKeyEvent { event ->
+                            if (event.type == KeyEventType.KeyDown && event.key == Key.DirectionDown) {
+                                keyboard?.hide()
+                                focusManager.moveFocus(FocusDirection.Down)
+                                true
+                            } else false
+                        },
                 )
                 Spacer(Modifier.height(12.dp))
                 OutlinedTextField(
@@ -228,7 +260,15 @@ fun AddSourceScreen(
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onPreviewKeyEvent { event ->
+                            if (event.type == KeyEventType.KeyDown && event.key == Key.DirectionDown) {
+                                keyboard?.hide()
+                                focusManager.moveFocus(FocusDirection.Down)
+                                true
+                            } else false
+                        },
                 )
             }
 
@@ -241,7 +281,15 @@ fun AddSourceScreen(
                     supportingText = { Text(stringResource(R.string.onboarding_mac_help)) },
                     trailingIcon = { PasteButton { mac += it } },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onPreviewKeyEvent { event ->
+                            if (event.type == KeyEventType.KeyDown && event.key == Key.DirectionDown) {
+                                keyboard?.hide()
+                                focusManager.moveFocus(FocusDirection.Down)
+                                true
+                            } else false
+                        },
                 )
             }
 
@@ -260,7 +308,15 @@ fun AddSourceScreen(
                         Text(stringResource(R.string.onboarding_guide_blank_help))
                     },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onPreviewKeyEvent { event ->
+                            if (event.type == KeyEventType.KeyDown && event.key == Key.DirectionDown) {
+                                keyboard?.hide()
+                                focusManager.moveFocus(FocusDirection.Down)
+                                true
+                            } else false
+                        },
                 )
                 Spacer(Modifier.height(12.dp))
                 OutlinedTextField(
@@ -271,7 +327,15 @@ fun AddSourceScreen(
                         Text(stringResource(R.string.onboarding_user_agent_help))
                     },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onPreviewKeyEvent { event ->
+                            if (event.type == KeyEventType.KeyDown && event.key == Key.DirectionDown) {
+                                keyboard?.hide()
+                                focusManager.moveFocus(FocusDirection.Down)
+                                true
+                            } else false
+                        },
                 )
             }
 

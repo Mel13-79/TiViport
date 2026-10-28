@@ -33,6 +33,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -55,6 +61,8 @@ fun EpgSettingsScreen(
     viewModel: EpgViewModel = viewModel(),
 ) {
     val ui by viewModel.ui.collectAsState()
+    val focusManager = LocalFocusManager.current
+    val keyboard = LocalSoftwareKeyboardController.current
     var showAdd by remember { mutableStateOf(false) }
     var newName by remember { mutableStateOf("") }
     var newUrl by remember { mutableStateOf("") }
@@ -113,7 +121,15 @@ fun EpgSettingsScreen(
                                 onValueChange = { newName = it },
                                 label = { Text(stringResource(R.string.epg_name_optional)) },
                                 singleLine = true,
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .onPreviewKeyEvent { event ->
+                                        if (event.type == KeyEventType.KeyDown && event.key == Key.DirectionDown) {
+                                            keyboard?.hide()
+                                            focusManager.moveFocus(FocusDirection.Down)
+                                            true
+                                        } else false
+                                    },
                             )
                             Spacer(Modifier.height(8.dp))
                             OutlinedTextField(
@@ -121,7 +137,15 @@ fun EpgSettingsScreen(
                                 onValueChange = { newUrl = it },
                                 label = { Text(stringResource(R.string.epg_xmltv_url)) },
                                 singleLine = true,
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .onPreviewKeyEvent { event ->
+                                        if (event.type == KeyEventType.KeyDown && event.key == Key.DirectionDown) {
+                                            keyboard?.hide()
+                                            focusManager.moveFocus(FocusDirection.Down)
+                                            true
+                                        } else false
+                                    },
                             )
                             Spacer(Modifier.height(12.dp))
                             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

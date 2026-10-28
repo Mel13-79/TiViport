@@ -38,7 +38,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import android.content.Context
@@ -228,6 +234,8 @@ private fun TmdbKeySection(settings: AppSettings) {
     val savedKey by settings.tmdbApiKey.collectAsState()
     var field by remember(savedKey) { mutableStateOf(savedKey) }
     val savedMessage = stringResource(R.string.settings_tmdb_saved)
+    val focusManager = LocalFocusManager.current
+    val keyboard = LocalSoftwareKeyboardController.current
 
     SettingsSection(stringResource(R.string.settings_section_metadata)) {
         Text(
@@ -241,7 +249,15 @@ private fun TmdbKeySection(settings: AppSettings) {
             onValueChange = { field = it.trim() },
             singleLine = true,
             label = { Text(stringResource(R.string.settings_tmdb_key_label)) },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .onPreviewKeyEvent { event ->
+                    if (event.type == KeyEventType.KeyDown && event.key == Key.DirectionDown) {
+                        keyboard?.hide()
+                        focusManager.moveFocus(FocusDirection.Down)
+                        true
+                    } else false
+                },
         )
         Spacer(Modifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
