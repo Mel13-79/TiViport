@@ -5,6 +5,7 @@
  */
 package com.tiviport.app.ui.channels
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.focus.FocusDirection
