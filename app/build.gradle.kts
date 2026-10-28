@@ -20,15 +20,25 @@ android {
     }
 
     signingConfigs {
-        create("upload") {
-            // Populated from environment variables in CI. Absent locally, which is why the
-            // release build type falls back to the debug key below.
-            val storePath = providers.environmentVariable("KEYSTORE_PATH").orNull
-            if (storePath != null) {
-                storeFile = file(storePath)
-                storePassword = providers.environmentVariable("KEYSTORE_PASSWORD").orNull
-                keyAlias = providers.environmentVariable("KEY_ALIAS").orNull
-                keyPassword = providers.environmentVariable("KEY_PASSWORD").orNull
+        create("release") {
+            // Читаем ключ из секретов GitHub (Base64)
+            val keystoreBase64 = System.getenv("KEYSTORE_BASE64") ?: ""
+            if (keystoreBase64.isNotEmpty()) {
+                val keystoreFile = file("${rootDir}/release.keystore")
+                keystoreFile.writeBytes(java.util.Base64.getDecoder().decode(keystoreBase64))
+                storeFile = keystoreFile
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
+            } else {
+                // Запасной вариант для локальной сборки
+                val storePath = providers.environmentVariable("KEYSTORE_PATH").orNull
+                if (storePath != null) {
+                    storeFile = file(storePath)
+                    storePassword = providers.environmentVariable("KEYSTORE_PASSWORD").orNull
+                    keyAlias = providers.environmentVariable("KEY_ALIAS").orNull
+                    keyPassword = providers.environmentVariable("KEY_PASSWORD").orNull
+                }
             }
         }
     }
@@ -41,29 +51,20 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-
-            /*
-             * Falls back to the debug key when no keystore is configured.
-             *
-             * An *unsigned* APK cannot be installed on Android at all — it is rejected before
-             * the user sees anything, with an error that explains nothing. For an early
-             * project that means every tester is blocked on the maintainer setting up signing
-             * infrastructure first.
-             *
-             * The trade-off is real and is written up in docs/RELEASING.md: moving to a
-             * proper keystore later changes the signature, and Android will refuse to upgrade
-             * over a debug-signed install. Set up real signing before announcing publicly.
-             */
-            signingConfig =
-                if (providers.environmentVariable("KEYSTORE_PATH").orNull != null) {
-                    signingConfigs.getByName("upload")
-                } else {
-                    signingConfigs.getByName("debug")
-                }
+            // Используем наш постоянный ключ, если он есть
+            signingConfig = if (System.getenv("KEYSTORE_BASE64") != null || providers.environmentVariable("KEYSTORE_PATH").orNull != null) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
         }
         debug {
             applicationIdSuffix = ".debug"
             isMinifyEnabled = false
+            // Применяем ту же подпись к debug-сборке, чтобы она ставилась поверх
+            if (System.getenv("KEYSTORE_BASE64") != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
