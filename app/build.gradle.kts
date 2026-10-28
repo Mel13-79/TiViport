@@ -19,6 +19,7 @@ android {
         versionCode = 21
         versionName = "1.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        setProperty("archivesBaseName", "TiViport")
     }
 
     signingConfigs {
