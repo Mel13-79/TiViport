@@ -101,6 +101,7 @@ fun SearchScreen(
             Spacer(Modifier.width(20.dp))
             val focusRequester = remember { FocusRequester() }
             val keyboard = LocalSoftwareKeyboardController.current
+            
             BasicTextField(
                 value = query,
                 onValueChange = { query = it },
@@ -111,11 +112,18 @@ fun SearchScreen(
                 ),
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                 modifier = Modifier
-                    .focusRequester(focusRequester),
+                    .focusRequester(focusRequester)
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            keyboard?.show()
+                        }
+                    },
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                    imeAction = androidx.compose.ui.text.input.ImeAction.Search
+                ),
             )
             LaunchedEffect(Unit) {
                 focusRequester.requestFocus()
-                keyboard?.show()
             }
             Spacer(Modifier.weight(1f))
             OutlinedButton(onClick = onBack) { Text(stringResource(R.string.common_done)) }
