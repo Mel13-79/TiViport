@@ -235,7 +235,7 @@ class AppSettings private constructor(context: Context) {
      * Applied at [android.content.ContextWrapper.attachBaseContext] time so the whole app —
      * including notifications built off the app context — picks it up.
      */
-    private val _languageTag = MutableStateFlow(prefs.getString(KEY_LANGUAGE, "").orEmpty())
+    private val _languageTag = MutableStateFlow(prefs.getString(KEY_LANGUAGE, "ru").orEmpty())
     val languageTag: StateFlow<String> = _languageTag.asStateFlow()
 
     fun setLanguageTag(tag: String) {
@@ -443,7 +443,7 @@ class AppSettings private constructor(context: Context) {
          */
         fun savedLanguageTag(context: Context): String =
             context.getSharedPreferences("opentv_settings", Context.MODE_PRIVATE)
-                .getString(KEY_LANGUAGE, "").orEmpty()
+                .getString(KEY_LANGUAGE, "ru").orEmpty()
         private const val KEY_REC_TARGET = "recording_target"
         private const val KEY_SMB_HOST = "smb_host"
         private const val KEY_SMB_SHARE = "smb_share"
