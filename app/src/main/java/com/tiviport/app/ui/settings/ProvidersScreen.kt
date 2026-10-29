@@ -64,7 +64,7 @@ fun ProvidersScreen(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
                 Switch(
-                    checked = source.isEnabled,
+                    checked = source.enabled,
                     onCheckedChange = { onToggle() },
                     modifier = Modifier.padding(end = 12.dp),
                 )

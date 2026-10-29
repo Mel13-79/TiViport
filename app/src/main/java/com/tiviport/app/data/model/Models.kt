@@ -62,8 +62,6 @@ data class Source(
      * (it takes the place of username/password). Null for Xtream/M3U.
      */
     val macAddress: String? = null,
-    /** Whether this provider is currently active. */
-    val isEnabled: Boolean = true,
     /** Optional explicit XMLTV URL. For Xtream this is derived if left null. */
     val epgUrl: String? = null,
     /**
