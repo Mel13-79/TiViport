@@ -189,8 +189,11 @@ interface ChannelDao {
     @Query("UPDATE channels SET hidden = :hidden WHERE id = :id")
     suspend fun setHidden(id: Long, hidden: Boolean)
 
-    @Query("UPDATE channels SET hidden = :hidden WHERE (:sourceId IS NULL OR sourceId = :sourceId) AND (:categoryId IS NULL OR categoryId = :categoryId)")
-    suspend fun setAllHidden(sourceId: Long?, categoryId: String?, hidden: Boolean)
+    @Query("UPDATE channels SET hidden = :hidden WHERE (:sourceId IS NULL OR sourceId = :sourceId)")
+    suspend fun setAllHidden(sourceId: Long?, hidden: Boolean)
+
+    @Query("UPDATE channels SET hidden = :hidden WHERE (:sourceId IS NULL OR sourceId = :sourceId) AND categoryId IN (:categoryIds)")
+    suspend fun setAllHiddenInCategories(sourceId: Long?, categoryIds: List<String>, hidden: Boolean)
 
     @Query("UPDATE channels SET customName = :name WHERE id = :id")
     suspend fun setCustomName(id: Long, name: String?)

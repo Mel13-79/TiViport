@@ -21,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -62,6 +63,11 @@ fun ProvidersScreen(
             .padding(horizontal = 32.dp, vertical = 24.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
+                Switch(
+                    checked = source.isEnabled,
+                    onCheckedChange = { onToggle() },
+                    modifier = Modifier.padding(end = 12.dp),
+                )
             Text(stringResource(R.string.settings_providers_title), style = MaterialTheme.typography.headlineMedium)
             Spacer(Modifier.weight(1f))
             OutlinedButton(onClick = onAddSource) { Text(stringResource(R.string.providers_add)) }
@@ -96,6 +102,7 @@ fun ProvidersScreen(
                         pendingRemove = null
                     },
                     onSetLiveFormat = { viewModel.setLiveFormat(source, it) },
+                    onToggle = { viewModel.toggleSource(source) },
                 )
             }
         }
@@ -111,6 +118,7 @@ private fun ProviderRow(
     onCancelRemove: () -> Unit,
     onConfirmRemove: () -> Unit,
     onSetLiveFormat: (LiveStreamFormat) -> Unit,
+    onToggle: () -> Unit,
 ) {
     Card {
         Column(

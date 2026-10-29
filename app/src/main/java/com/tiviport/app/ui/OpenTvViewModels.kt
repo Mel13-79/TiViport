@@ -98,6 +98,11 @@ class SourcesViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    fun toggleSource(source: Source) {
+        viewModelScope.launch {
+        }
+    }
+
     fun test(draft: Source) {
         viewModelScope.launch {
             _ui.value = _ui.value.copy(testing = true, testResult = null, testError = null)
@@ -618,9 +623,9 @@ class ChannelsViewModel(app: Application) : AndroidViewModel(app) {
     fun selectManagerCategory(key: String?) { managerSelectedCategory.value = key }
 
     /** Hide or show a whole logical channel — every quality variant follows. */
-    fun setAllHidden(sourceId: Long?, categoryId: String?, hidden: Boolean) {
+    fun setAllHidden(sourceId: Long?, categoryIds: List<String>?, hidden: Boolean) {
         viewModelScope.launch {
-            graph.catalogRepository.setAllChannelsHidden(sourceId, categoryId, hidden)
+            graph.catalogRepository.setAllChannelsHidden(sourceId, categoryIds, hidden)
         }
     }
 
