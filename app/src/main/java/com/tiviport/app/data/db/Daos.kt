@@ -172,7 +172,7 @@ interface ChannelDao {
     )
     suspend fun variantsInGroup(groupKey: String): List<Channel>
 
-    @Query("SELECT COUNT(*) FROM channels WHERE sourceId = :sourceId")
+    @Query("SELECT COUNT(*) FROM channels WHERE (:sourceId IS NULL OR sourceId = :sourceId)")
     suspend fun countForSource(sourceId: Long): Int
 
     /**
@@ -189,6 +189,9 @@ interface ChannelDao {
     @Query("UPDATE channels SET hidden = :hidden WHERE id = :id")
     suspend fun setHidden(id: Long, hidden: Boolean)
 
+    @Query("UPDATE channels SET hidden = :hidden WHERE (:sourceId IS NULL OR sourceId = :sourceId)")
+    suspend fun setAllHidden(sourceId: Long, hidden: Boolean)
+
     @Query("UPDATE channels SET customName = :name WHERE id = :id")
     suspend fun setCustomName(id: Long, name: String?)
 
@@ -196,7 +199,7 @@ interface ChannelDao {
     suspend fun setSortIndex(id: Long, sortIndex: Int)
 
     /** Every channel for a source. The channels table is live-only, so these are its live channels. */
-    @Query("SELECT * FROM channels WHERE sourceId = :sourceId")
+    @Query("SELECT * FROM channels WHERE (:sourceId IS NULL OR sourceId = :sourceId)")
     suspend fun forSource(sourceId: Long): List<Channel>
 
     /** Rewrites one channel's resolved playback URL — used when a source's live stream format changes. */
@@ -241,10 +244,10 @@ interface ChannelDao {
      * first means a sync that fails halfway leaves the user with an empty app — which is how
      * a player ends up telling people to reinstall to get their channels back.
      */
-    @Query("DELETE FROM channels WHERE sourceId = :sourceId AND lastSeenMillis < :syncStamp")
+    @Query("DELETE FROM channels WHERE (:sourceId IS NULL OR sourceId = :sourceId) AND lastSeenMillis < :syncStamp")
     suspend fun deleteStale(sourceId: Long, syncStamp: Long)
 
-    @Query("DELETE FROM channels WHERE sourceId = :sourceId")
+    @Query("DELETE FROM channels WHERE (:sourceId IS NULL OR sourceId = :sourceId)")
     suspend fun deleteForSource(sourceId: Long)
 
     /**
@@ -283,7 +286,7 @@ interface ChannelDao {
         deleteStale(sourceId, syncStamp)
     }
 
-    @Query("SELECT * FROM channels WHERE sourceId = :sourceId")
+    @Query("SELECT * FROM channels WHERE (:sourceId IS NULL OR sourceId = :sourceId)")
     suspend fun userStateForSource(sourceId: Long): List<Channel>
 }
 
@@ -304,7 +307,7 @@ interface CategoryDao {
     @Upsert
     suspend fun upsertAll(categories: List<Category>)
 
-    @Query("DELETE FROM categories WHERE sourceId = :sourceId")
+    @Query("DELETE FROM categories WHERE (:sourceId IS NULL OR sourceId = :sourceId)")
     suspend fun deleteForSource(sourceId: Long)
 }
 
@@ -459,7 +462,7 @@ interface MovieDao {
     @Query(
         """
         SELECT * FROM movies
-        WHERE sourceId = :sourceId AND id != :excludeId
+        WHERE (:sourceId IS NULL OR sourceId = :sourceId) AND id != :excludeId
           AND (:categoryId IS NULL OR categoryId = :categoryId)
         ORDER BY rating DESC, addedMillis DESC
         LIMIT :limit
@@ -514,7 +517,7 @@ interface MovieDao {
     @Upsert
     suspend fun upsertAll(movies: List<Movie>)
 
-    @Query("DELETE FROM movies WHERE sourceId = :sourceId")
+    @Query("DELETE FROM movies WHERE (:sourceId IS NULL OR sourceId = :sourceId)")
     suspend fun deleteForSource(sourceId: Long)
 }
 
@@ -548,7 +551,7 @@ interface SeriesDao {
     @Query(
         """
         SELECT * FROM series
-        WHERE sourceId = :sourceId AND id != :excludeId
+        WHERE (:sourceId IS NULL OR sourceId = :sourceId) AND id != :excludeId
           AND (:categoryId IS NULL OR categoryId = :categoryId)
         ORDER BY rating DESC, addedMillis DESC
         LIMIT :limit
@@ -584,13 +587,13 @@ interface SeriesDao {
     @Upsert
     suspend fun upsertAll(items: List<Series>)
 
-    @Query("DELETE FROM series WHERE sourceId = :sourceId")
+    @Query("DELETE FROM series WHERE (:sourceId IS NULL OR sourceId = :sourceId)")
     suspend fun deleteForSource(sourceId: Long)
 }
 
 @Dao
 interface EpisodeDao {
-    @Query("SELECT * FROM episodes WHERE sourceId = :sourceId AND seriesId = :seriesId ORDER BY season, episodeNumber")
+    @Query("SELECT * FROM episodes WHERE (:sourceId IS NULL OR sourceId = :sourceId) AND seriesId = :seriesId ORDER BY season, episodeNumber")
     fun observeForSeries(sourceId: Long, seriesId: String): Flow<List<Episode>>
 
     @Query("SELECT * FROM episodes WHERE id = :id")
@@ -602,7 +605,7 @@ interface EpisodeDao {
     @Upsert
     suspend fun upsertAll(episodes: List<Episode>)
 
-    @Query("DELETE FROM episodes WHERE sourceId = :sourceId")
+    @Query("DELETE FROM episodes WHERE (:sourceId IS NULL OR sourceId = :sourceId)")
     suspend fun deleteForSource(sourceId: Long)
 }
 

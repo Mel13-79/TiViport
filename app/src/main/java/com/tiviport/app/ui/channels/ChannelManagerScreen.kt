@@ -138,6 +138,10 @@ fun ChannelManagerScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(stringResource(R.string.channels_manager_title), style = MaterialTheme.typography.headlineMedium)
+            Spacer(Modifier.width(24.dp))
+            OutlinedButton(onClick = { viewModel.setAllHidden(selectedSource, true) }) { Text("Скрыть все") }
+            Spacer(Modifier.width(8.dp))
+            OutlinedButton(onClick = { viewModel.setAllHidden(selectedSource, false) }) { Text("Показать все") }
             Spacer(Modifier.weight(1f))
             OutlinedButton(onClick = onBack) { Text(stringResource(R.string.common_done)) }
         }

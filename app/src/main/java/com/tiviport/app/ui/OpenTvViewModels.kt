@@ -618,6 +618,12 @@ class ChannelsViewModel(app: Application) : AndroidViewModel(app) {
     fun selectManagerCategory(key: String?) { managerSelectedCategory.value = key }
 
     /** Hide or show a whole logical channel — every quality variant follows. */
+    fun setAllHidden(sourceId: Long?, hidden: Boolean) {
+        viewModelScope.launch {
+            graph.catalogRepository.setAllChannelsHidden(sourceId, hidden)
+        }
+    }
+
     fun setRowHidden(row: Row, hidden: Boolean) {
         viewModelScope.launch {
             row.variants.forEach { graph.catalogRepository.setChannelHidden(it.id, hidden) }
