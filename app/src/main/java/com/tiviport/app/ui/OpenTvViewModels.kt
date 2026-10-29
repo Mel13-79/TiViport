@@ -618,9 +618,9 @@ class ChannelsViewModel(app: Application) : AndroidViewModel(app) {
     fun selectManagerCategory(key: String?) { managerSelectedCategory.value = key }
 
     /** Hide or show a whole logical channel — every quality variant follows. */
-    fun setAllHidden(sourceId: Long?, hidden: Boolean) {
+    fun setAllHidden(sourceId: Long?, categoryId: String?, hidden: Boolean) {
         viewModelScope.launch {
-            graph.catalogRepository.setAllChannelsHidden(sourceId, hidden)
+            graph.catalogRepository.setAllChannelsHidden(sourceId, categoryId, hidden)
         }
     }
 
