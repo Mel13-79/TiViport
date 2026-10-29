@@ -251,7 +251,11 @@ class EpgRepository(
                 api.openEpgStream(source)
             }
             feed.url != null -> {
-                val response = http.newCall(Request.Builder().url(feed.url).build()).execute()
+                val response = http.newBuilder()
+                    .callTimeout(0, java.util.concurrent.TimeUnit.MILLISECONDS)
+                    .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
+                    .build()
+                    .newCall(Request.Builder().url(feed.url).build()).execute()
                 if (!response.isSuccessful) {
                     response.close()
                     throw IllegalStateException("Guide download failed (HTTP ${response.code}).")
