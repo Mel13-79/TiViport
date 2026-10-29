@@ -190,7 +190,7 @@ interface ChannelDao {
     suspend fun setHidden(id: Long, hidden: Boolean)
 
     @Query("UPDATE channels SET hidden = :hidden WHERE (:sourceId IS NULL OR sourceId = :sourceId)")
-    suspend fun setAllHidden(sourceId: Long, hidden: Boolean)
+    suspend fun setAllHidden(sourceId: Long?, hidden: Boolean)
 
     @Query("UPDATE channels SET customName = :name WHERE id = :id")
     suspend fun setCustomName(id: Long, name: String?)
