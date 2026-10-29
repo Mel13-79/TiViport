@@ -63,11 +63,6 @@ fun ProvidersScreen(
             .padding(horizontal = 32.dp, vertical = 24.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-                Switch(
-                    checked = source.enabled,
-                    onCheckedChange = { onToggle() },
-                    modifier = Modifier.padding(end = 12.dp),
-                )
             Text(stringResource(R.string.settings_providers_title), style = MaterialTheme.typography.headlineMedium)
             Spacer(Modifier.weight(1f))
             OutlinedButton(onClick = onAddSource) { Text(stringResource(R.string.providers_add)) }
@@ -127,6 +122,11 @@ private fun ProviderRow(
                 .padding(horizontal = 18.dp, vertical = 14.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
+                Switch(
+                    checked = source.enabled,
+                    onCheckedChange = { onToggle() },
+                    modifier = Modifier.padding(end = 12.dp),
+                )
                 Column(Modifier.weight(1f)) {
                     Text(source.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                     Text(
