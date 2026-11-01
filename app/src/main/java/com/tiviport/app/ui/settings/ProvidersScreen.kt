@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -137,27 +139,15 @@ private fun ProviderRow(
                 .padding(horizontal = 18.dp, vertical = 14.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
+                var isRowFocused by remember { mutableStateOf(false) }
                 Row(
                     modifier = Modifier
                         .weight(1f)
-                        .toggleable(
-                            value = source.enabled,
-                            onValueChange = { onToggle() },
-                            role = Role.Switch
-                        )
-                        .focusable()
-                        .onKeyEvent { event ->
-                            if (event.type == KeyEventType.KeyDown &&
-                                (event.key == Key.DirectionCenter ||
-                                    event.key == Key.Enter ||
-                                    event.key == Key.Spacebar)
-                            ) {
-                                onToggle()
-                                true
-                            } else {
-                                false
-                            }
-                        },
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(if (isRowFocused) MaterialTheme.colorScheme.surfaceVariant else Color.Transparent)
+                        .onFocusChanged { isRowFocused = it.isFocused }
+                        .clickable { onToggle() }
+                        .padding(vertical = 8.dp, horizontal = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Box(
