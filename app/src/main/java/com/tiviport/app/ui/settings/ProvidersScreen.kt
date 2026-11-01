@@ -137,12 +137,9 @@ private fun ProviderRow(
                 .padding(horizontal = 18.dp, vertical = 14.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
+                Row(
                     modifier = Modifier
-                        .padding(end = 12.dp)
-                        .size(52.dp, 28.dp)
-                        .clip(RoundedCornerShape(14.dp))
-                        .background(if (source.enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
+                        .weight(1f)
                         .toggleable(
                             value = source.enabled,
                             onValueChange = { onToggle() },
@@ -160,24 +157,33 @@ private fun ProviderRow(
                             } else {
                                 false
                             }
-                        }
-                        .padding(2.dp),
-                    contentAlignment = if (source.enabled) Alignment.CenterEnd else Alignment.CenterStart
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(24.dp)
-                            .clip(CircleShape)
-                            .background(if (source.enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant)
-                    )
-                }
-                Column(Modifier.weight(1f)) {
-                    Text(source.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                    Text(
-                        "${source.kind.name} · ${hostOf(source.url)}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                            .padding(end = 12.dp)
+                            .size(52.dp, 28.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(if (source.enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
+                            .padding(2.dp),
+                        contentAlignment = if (source.enabled) Alignment.CenterEnd else Alignment.CenterStart
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clip(CircleShape)
+                                .background(if (source.enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant)
+                        )
+                    }
+                    Column(Modifier.weight(1f)) {
+                        Text(source.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                        Text(
+                            "${source.kind.name} · ${hostOf(source.url)}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
 
                 if (confirming) {
