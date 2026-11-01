@@ -28,6 +28,11 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Dns
 import androidx.compose.material.icons.filled.Extension
@@ -120,8 +125,12 @@ fun SettingsHubScreen(
             itemsIndexed(entries) { index, entry ->
                 HubRow(
                     entry = entry,
+                    index = index,
+                    totalCount = entries.size,
                     modifier = Modifier.focusRequester(focusRequesters[index]),
-                    onFocus = { lastFocusedIndex = index }
+                    onFocus = { lastFocusedIndex = index },
+                    onLoopUp = { focusRequesters.lastOrNull()?.requestFocus() },
+                    onLoopDown = { focusRequesters.firstOrNull()?.requestFocus() }
                 )
             }
         }
@@ -138,13 +147,28 @@ private data class HubEntry(
 @Composable
 private fun HubRow(
     entry: HubEntry,
+    index: Int,
+    totalCount: Int,
     modifier: Modifier = Modifier,
-    onFocus: () -> Unit
+    onFocus: () -> Unit,
+    onLoopUp: () -> Unit,
+    onLoopDown: () -> Unit
 ) {
     var focused by remember { mutableStateOf(false) }
     Row(
         modifier
             .fillMaxWidth()
+            .onPreviewKeyEvent { event ->
+                if (event.type == KeyEventType.KeyDown) {
+                    if (event.key == Key.DirectionUp && index == 0) {
+                        onLoopUp()
+                        true
+                    } else if (event.key == Key.DirectionDown && index == totalCount - 1) {
+                        onLoopDown()
+                        true
+                    } else false
+                } else false
+            }
             .onFocusChanged { 
                 focused = it.isFocused 
                 if (it.isFocused) onFocus()
