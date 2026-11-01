@@ -99,11 +99,25 @@ fun SettingsHubScreen(
 
         Spacer(Modifier.height(20.dp))
 
+        var lastFocusedIndex by rememberSaveable { mutableStateOf(0) }
+        val focusRequesters = remember(entries.size) { List(entries.size) { FocusRequester() } }
+
+        LaunchedEffect(Unit) {
+            delay(100)
+            focusRequesters.getOrNull(lastFocusedIndex)?.requestFocus()
+        }
+
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier.widthIn(max = 760.dp),
         ) {
-            items(entries) { entry -> HubRow(entry) }
+            itemsIndexed(entries) { index, entry ->
+                HubRow(
+                    entry = entry,
+                    modifier = Modifier.focusRequester(focusRequesters[index]),
+                    onFocus = { lastFocusedIndex = index }
+                )
+            }
         }
     }
 }
@@ -116,12 +130,19 @@ private data class HubEntry(
 )
 
 @Composable
-private fun HubRow(entry: HubEntry) {
+private fun HubRow(
+    entry: HubEntry,
+    modifier: Modifier = Modifier,
+    onFocus: () -> Unit
+) {
     var focused by remember { mutableStateOf(false) }
     Row(
-        Modifier
+        modifier
             .fillMaxWidth()
-            .onFocusChanged { focused = it.isFocused }
+            .onFocusChanged { 
+                focused = it.isFocused 
+                if (it.isFocused) onFocus()
+            }
             .clip(RoundedCornerShape(14.dp))
             .background(
                 if (focused) MaterialTheme.colorScheme.primaryContainer
