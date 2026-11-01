@@ -24,6 +24,9 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -129,19 +132,28 @@ private fun ProviderRow(
                 .padding(horizontal = 18.dp, vertical = 14.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Switch(
-                    checked = source.enabled,
-                    onCheckedChange = { onToggle() },
+                Box(
                     modifier = Modifier
                         .padding(end = 12.dp)
+                        .size(52.dp, 28.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(if (source.enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
+                        .toggleable(
+                            value = source.enabled,
+                            onValueChange = { onToggle() },
+                            role = Role.Switch
+                        )
                         .focusable()
-                        .onPreviewKeyEvent { event ->
-                            if (event.type == KeyEventType.KeyUp && (event.key == Key.DirectionCenter || event.key == Key.Enter)) {
-                                onToggle()
-                                true
-                            } else false
-                        }
-                )
+                        .padding(2.dp),
+                    contentAlignment = if (source.enabled) Alignment.CenterEnd else Alignment.CenterStart
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(if (source.enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant)
+                    )
+                }
                 Column(Modifier.weight(1f)) {
                     Text(source.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                     Text(
