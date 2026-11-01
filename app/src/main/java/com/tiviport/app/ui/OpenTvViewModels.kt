@@ -100,6 +100,7 @@ class SourcesViewModel(app: Application) : AndroidViewModel(app) {
 
     fun toggleSource(source: Source) {
         viewModelScope.launch {
+            graph.sourceRepository.save(source.copy(enabled = !source.enabled))
         }
     }
 
