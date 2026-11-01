@@ -149,6 +149,18 @@ private fun ProviderRow(
                             role = Role.Switch
                         )
                         .focusable()
+                        .onKeyEvent { event ->
+                            if (event.type == KeyEventType.KeyDown &&
+                                (event.key == Key.DirectionCenter ||
+                                    event.key == Key.Enter ||
+                                    event.key == Key.Spacebar)
+                            ) {
+                                onToggle()
+                                true
+                            } else {
+                                false
+                            }
+                        }
                         .padding(2.dp),
                     contentAlignment = if (source.enabled) Alignment.CenterEnd else Alignment.CenterStart
                 ) {
