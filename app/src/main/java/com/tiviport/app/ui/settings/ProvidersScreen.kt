@@ -21,6 +21,7 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.foundation.focusable
 import androidx.compose.material3.Button
@@ -134,7 +135,7 @@ private fun ProviderRow(
                     modifier = Modifier
                         .padding(end = 12.dp)
                         .focusable()
-                        .onKeyEvent { event ->
+                        .onPreviewKeyEvent { event ->
                             if (event.type == KeyEventType.KeyUp && (event.key == Key.DirectionCenter || event.key == Key.Enter)) {
                                 onToggle()
                                 true
