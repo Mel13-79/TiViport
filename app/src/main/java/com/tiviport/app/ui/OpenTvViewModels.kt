@@ -579,6 +579,7 @@ class ChannelsViewModel(app: Application) : AndroidViewModel(app) {
     /** Providers, so the manager can offer a source filter (shown only when there's more than one). */
     val sources: StateFlow<List<Source>> =
         graph.sourceRepository.observeAll()
+            .map { list -> list.filter { it.enabled } }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     /**
@@ -766,6 +767,7 @@ class VodViewModel(app: Application) : AndroidViewModel(app) {
     /** Providers, so Movies/Shows can offer a source filter (shown only when there's more than one). */
     val sources: StateFlow<List<Source>> =
         graph.sourceRepository.observeAll()
+            .map { list -> list.filter { it.enabled } }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     // Category chips scoped to the chosen provider: pick a provider and you see only its categories,
