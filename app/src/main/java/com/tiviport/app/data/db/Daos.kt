@@ -297,7 +297,7 @@ interface ChannelDao {
 
 @Dao
 interface CategoryDao {
-    @Query("SELECT * FROM categories WHERE kind = :kind ORDER BY sortIndex, name")
+    @Query("SELECT * FROM categories WHERE kind = :kind AND sourceId IN (SELECT id FROM sources WHERE enabled = 1) ORDER BY sortIndex, name")
     fun observe(kind: StreamKind): Flow<List<Category>>
 
     /** One-shot list of every category of a kind, ordered like [observe] — the web manager reads
