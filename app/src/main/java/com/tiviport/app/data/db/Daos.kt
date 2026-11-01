@@ -63,6 +63,7 @@ interface ChannelDao {
         """
         SELECT * FROM channels
         WHERE hidden = 0
+          AND sourceId IN (SELECT id FROM sources WHERE enabled = 1)
           AND (:sourceId IS NULL OR sourceId = :sourceId)
           AND (:categoryId IS NULL OR categoryId = :categoryId)
         ORDER BY sortIndex, displayName
@@ -70,7 +71,7 @@ interface ChannelDao {
     )
     fun observe(sourceId: Long?, categoryId: String?): Flow<List<Channel>>
 
-    @Query("SELECT * FROM channels WHERE favourite = 1 AND hidden = 0 ORDER BY sortIndex, displayName")
+    @Query("SELECT * FROM channels WHERE favourite = 1 AND hidden = 0 AND sourceId IN (SELECT id FROM sources WHERE enabled = 1) ORDER BY sortIndex, displayName")
     fun observeFavourites(): Flow<List<Channel>>
 
     /**
@@ -82,7 +83,7 @@ interface ChannelDao {
     @Query(
         """
         SELECT * FROM channels
-        WHERE hidden = 0 AND categoryId IN (:categoryIds)
+        WHERE hidden = 0 AND sourceId IN (SELECT id FROM sources WHERE enabled = 1) AND categoryId IN (:categoryIds)
         ORDER BY sortIndex, displayName
         """
     )
@@ -141,6 +142,7 @@ interface ChannelDao {
         """
         SELECT * FROM channels
         WHERE hidden = 0
+          AND sourceId IN (SELECT id FROM sources WHERE enabled = 1)
           AND (displayName LIKE '%' || :query || '%' OR name LIKE '%' || :query || '%')
         ORDER BY favourite DESC, sortIndex, displayName
         LIMIT :limit
@@ -166,7 +168,7 @@ interface ChannelDao {
     @Query(
         """
         SELECT * FROM channels
-        WHERE groupKey = :groupKey AND groupKey != '' AND hidden = 0
+        WHERE groupKey = :groupKey AND groupKey != '' AND hidden = 0 AND sourceId IN (SELECT id FROM sources WHERE enabled = 1)
         ORDER BY qualityRank DESC, displayName
         """
     )
@@ -180,7 +182,7 @@ interface ChannelDao {
      * screen tell "the guide is still building from channels on disk" apart from "nothing loaded",
      * so a failed or empty sync surfaces an error instead of spinning forever.
      */
-    @Query("SELECT COUNT(*) FROM channels WHERE hidden = 0")
+    @Query("SELECT COUNT(*) FROM channels WHERE hidden = 0 AND sourceId IN (SELECT id FROM sources WHERE enabled = 1)")
     fun observeVisibleCount(): Flow<Int>
 
     @Query("UPDATE channels SET favourite = :favourite WHERE id = :id")
