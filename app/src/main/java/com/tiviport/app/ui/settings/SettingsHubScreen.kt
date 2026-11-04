@@ -129,8 +129,8 @@ fun SettingsHubScreen(
                     totalCount = entries.size,
                     modifier = Modifier.focusRequester(focusRequesters[index]),
                     onFocus = { lastFocusedIndex = index },
-                    onLoopUp = { focusRequesters.lastOrNull()?.requestFocus() },
-                    onLoopDown = { focusRequesters.firstOrNull()?.requestFocus() }
+                    onLoopUp = { runCatching { focusRequesters.lastOrNull()?.requestFocus() } },
+                    onLoopDown = { runCatching { focusRequesters.firstOrNull()?.requestFocus() } }
                 )
             }
         }
