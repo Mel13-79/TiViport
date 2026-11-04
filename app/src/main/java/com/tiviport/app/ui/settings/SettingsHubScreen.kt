@@ -10,6 +10,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.input.key.Key
@@ -52,6 +54,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -112,6 +115,8 @@ fun SettingsHubScreen(
 
         var lastFocusedIndex by rememberSaveable { mutableStateOf(0) }
         val focusRequesters = remember(entries.size) { List(entries.size) { FocusRequester() } }
+        val listState = rememberLazyListState()
+        val coroutineScope = rememberCoroutineScope()
 
         LaunchedEffect(Unit) {
             delay(100)
@@ -119,6 +124,7 @@ fun SettingsHubScreen(
         }
 
         LazyColumn(
+            state = listState,
             verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier.widthIn(max = 760.dp),
         ) {
@@ -129,8 +135,8 @@ fun SettingsHubScreen(
                     totalCount = entries.size,
                     modifier = Modifier.focusRequester(focusRequesters[index]),
                     onFocus = { lastFocusedIndex = index },
-                    onLoopUp = { runCatching { focusRequesters.lastOrNull()?.requestFocus() } },
-                    onLoopDown = { runCatching { focusRequesters.firstOrNull()?.requestFocus() } }
+                    onLoopUp = { coroutineScope.launch { listState.scrollToItem(entries.size - 1); delay(50); runCatching { focusRequesters.last().requestFocus() } } },
+                    onLoopDown = { coroutineScope.launch { listState.scrollToItem(0); delay(50); runCatching { focusRequesters.first().requestFocus() } } }
                 )
             }
         }
