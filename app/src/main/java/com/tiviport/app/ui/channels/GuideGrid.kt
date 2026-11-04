@@ -23,6 +23,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,6 +36,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -142,12 +145,16 @@ fun ChannelList(
     modifier: Modifier = Modifier,
 ) {
     val now = System.currentTimeMillis()
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    val focusRequesters = remember(rows.size) { List(rows.size) { androidx.compose.ui.focus.FocusRequester() } }
     LazyColumn(
+        state = listState,
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(3.dp),
     ) {
-        items(rows, key = { it.key }) { row ->
+        itemsIndexed(rows, key = { _, it -> it.key }) { index, row ->
             ChannelListRow(
                 row = row,
                 nowMillis = now,
@@ -156,6 +163,31 @@ fun ChannelList(
                 onFocus = { onFocusRow(row) },
                 onToggleFavourite = { onToggleFavourite(row) },
                 onExitLeft = onExitLeftFromChannel,
+                modifier = Modifier
+                    .focusRequester(focusRequesters[index])
+                    .onPreviewKeyEvent { e ->
+                        if (e.type == KeyEventType.KeyDown) {
+                            when {
+                                e.key == Key.DirectionUp && index == 0 -> {
+                                    coroutineScope.launch {
+                                        listState.scrollToItem(rows.size - 1)
+                                        delay(50)
+                                        runCatching { focusRequesters.last().requestFocus() }
+                                    }
+                                    true
+                                }
+                                e.key == Key.DirectionDown && index == rows.size - 1 -> {
+                                    coroutineScope.launch {
+                                        listState.scrollToItem(0)
+                                        delay(50)
+                                        runCatching { focusRequesters.first().requestFocus() }
+                                    }
+                                    true
+                                }
+                                else -> false
+                            }
+                        } else false
+                    },
             )
         }
     }
@@ -170,10 +202,11 @@ private fun ChannelListRow(
     onFocus: () -> Unit,
     onToggleFavourite: () -> Unit,
     onExitLeft: () -> Boolean,
+    modifier: Modifier = Modifier,
 ) {
     var focused by remember { mutableStateOf(false) }
     Row(
-        Modifier
+        modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
             .background(
