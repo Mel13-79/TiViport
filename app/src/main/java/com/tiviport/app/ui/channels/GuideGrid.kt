@@ -175,7 +175,7 @@ fun ChannelList(
                                 e.key == Key.DirectionUp && index == 0 -> {
                                     coroutineScope.launch {
                                         listState.scrollToItem(rows.size - 1)
-                                        delay(50)
+                                        delay(150)
                                         runCatching { focusRequesters.last().requestFocus() }
                                     }
                                     true
@@ -183,7 +183,7 @@ fun ChannelList(
                                 e.key == Key.DirectionDown && index == rows.size - 1 -> {
                                     coroutineScope.launch {
                                         listState.scrollToItem(0)
-                                        delay(50)
+                                        delay(150)
                                         runCatching { focusRequesters.first().requestFocus() }
                                     }
                                     true
