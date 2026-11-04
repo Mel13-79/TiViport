@@ -16,8 +16,8 @@ android {
         applicationId = "com.tiviport.app"
         minSdk = 23
         targetSdk = 35
-        versionCode = 39
-        versionName = "1.1.9"
+        versionCode = 40
+        versionName = "1.1.10"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         setProperty("archivesBaseName", "TiViport")
     }
